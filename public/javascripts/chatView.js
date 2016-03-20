@@ -10,7 +10,7 @@ $(document).ready(function() {
     client.userRenamed = function(values){
         $("#userlist").empty();
         for(var user of client.users) client.userConnected({username: user});
-    };
+    }.bind(this);
     client.userMessaged = function(values){
         $("#messages").append('<p>' + values.from + ": " +values.text + "</p>");
     }

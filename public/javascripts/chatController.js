@@ -17,11 +17,20 @@ class ChatClient{
                     this.users.splice(this.users.indexOf(data.from),1);
                     this.users.push(data.to);
                     this.userRenamed({from: data.from, to: data.to});
+                    if (this.name == data.from) {this.name = data.to;localStorage.setItem("chat-username", this.name)};
                     break;
                 case "message":
                     this.userMessaged({from: data.from, text: data.text});
                     break;
+                case "init":
+                    localStorage.setItem("chat-username", data.name);
+                    this.name = data.name;
             }
+        }.bind(this);
+        this.socket.onopen = function(){
+            let username = localStorage.getItem("chat-username");
+            if (!username) username = "";
+            this.socket.send(JSON.stringify({type: "init", name: username}));
         }.bind(this);
     }
     userDisconnected(values){

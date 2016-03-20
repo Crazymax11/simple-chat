@@ -6,7 +6,7 @@
 class User{
     constructor(values){
         console.log("constructor");
-        this.name = values.name || this._getRandomName();
+        //this.name = values.name || this._getRandomName();
         this.connection = values.connection;
         this.usersArr = values.usersArr;
         this.connection.on("text", function (str) {
@@ -26,11 +26,21 @@ class User{
                         this.name = message.text.substring("/rename".length + 1);
                         this.onNameChanged(this.name);
                     }
+                    break;
+                case "init":
+                    this.name = message.name || this._getRandomName();
+                    this.onInited(this.name);
+                    this.sendMessage(JSON.stringify({type: "init", name: this.name}));
+                    break;
             }
         }.bind(this));
         this.connection.on("close", function(code, reason){
             console.log("user %s disconnected with code %d and reason $s", this.name, code, reason);
             this.onDisconnect("");
+        }.bind(this));
+        this.connection.on("error", function(err){
+            console.log(err);
+            //this.onDisconnect("");
         }.bind(this));
     }
     _getRandomName(){
@@ -66,8 +76,11 @@ class User{
         }
         catch(err){
             console.log(err);
-            this.usersArr.splice(this.usersArr.indexOf(user),1);
+            this.usersArr.splice(this.usersArr.indexOf(this),1);
         }
+    }
+    onInited(name){
+
     }
 }
 

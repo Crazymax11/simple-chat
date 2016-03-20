@@ -9,16 +9,17 @@ var server = ws.createServer(function (conn) {
   //console.log(JSON.stringify(conn));
   //console.log(conn);
   let user = new User({connection: conn, id: id, usersArr: users});
+  user.onInited = function(username) {
+    userConnected(username);
+    for(var cruser of users){
+      if (cruser != user) user.sendMessage(JSON.stringify({type: "new user", username: cruser.name}));
+    }
+  };
+  users.push(user);
   user.onMessage = (message) => broadcastMessage({text: message, username : user.name});
   user.onNameChanged = (newName) => renameUser({newname: newName, oldname: user.oldname});
   user.onDisconnect = (message) => userDisconnected({message: message, username: user.name});
-  users.push(user);
-  for(var curuser of users){
-    if (curuser != user) {
-      user.sendMessage(JSON.stringify({type: "new user", username: curuser.name}));
-    }
-  }
-  userConnected(user.name);
+
 }).listen(1992);
 
 // text - string

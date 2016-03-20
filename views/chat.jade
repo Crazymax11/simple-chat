@@ -4,9 +4,11 @@ html
         url = "#{url}";
         port = "#{port}";
     script(type='text/javascript', src='https://code.jquery.com/jquery-2.2.2.min.js')
+    link(rel='stylesheet', href='/stylesheets/style.css' crossorigin='anonymous')
     link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css' integrity='sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7' crossorigin='anonymous')
     link(href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.6/slate/bootstrap.min.css", rel="stylesheet", integrity="sha384-X9JiR5BtXUXiV6R3XuMyVGefFyy+18PHpBwaMfteb/vd2RrK6Gt4KPenkQyWLxCC", crossorigin="anonymous")
     script(type='text/javascript', src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js' integrity='sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS' crossorigin='anonymous')
+
     head(lang='en')
         title= title
         meta(charset='UTF-8')
@@ -19,7 +21,12 @@ html
                 input(type='text' class='form-control' placeholder='Type here...')
                 span(class='input-group-btn')
                     button(id='send' class='btn btn-default' type='button') Go!
-            button(id='clear' class='btn btn-default' type='button') Clear chat
+            div#settings
+                button(id='clear' class='btn btn-default' type='button') Clear chat
+                div#mute-container
+                    label.checkbox-inline
+                        input#mute-sound(type='checkbox')
+                        | Mute sound
         script(type='text/javascript', src='/javascripts/chatController.js')
         script(type='text/javascript', src='/javascripts/chatView.js')
 

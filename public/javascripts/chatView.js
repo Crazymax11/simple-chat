@@ -13,37 +13,55 @@ $(document).ready(function() {
     };
     client.userMessaged = function(values){
         $("#messages").append('<p>' + values.from + ": " +values.text + "</p>");
+        notification(values.from);
     }
-});
 
-$('#send').on('click', function () {
-    sendData($('.form-control').val());
-    $('.form-control').val("");
 
-});
+    var newMessageSound = new Audio("/sounds/newMessage.mp3");
 
-$('#clear').on('click', function(){
-    $('#messages').empty();
-});
 
-function sendData(text){
-    if (text.substring(0, "/rename".length) == "/rename"){
-        var newname = text.substring("/rename".length + 1);
-        client.rename(newname);
+    function notification(senderName){
+        var myName = 'Glebka';
+        var muted = $('#mute-sound').is(':checked');
+        if((senderName != myName) && !muted){
+            newMessageSound.pause();
+            newMessageSound.play();
+        }
     }
-    else{
-        client.sendMessage(text);
-    }
-}
 
-$('.form-control').bind("enterKey",function(e){
-    sendData(this.value);
-    this.value = "";
+
+    $('#send').on('click', function () {
+        sendData($('.form-control').val());
+        $('.form-control').val("");
+
+    });
+
+    $('#clear').on('click', function(){
+        $('#messages').empty();
+    });
+
+    function sendData(text){
+        if (text.substring(0, "/rename".length) == "/rename"){
+            var newname = text.substring("/rename".length + 1);
+            client.rename(newname);
+        }
+        else{
+            client.sendMessage(text);
+        }
+    }
+
+    $('.form-control').bind("enterKey",function(e){
+        sendData(this.value);
+        this.value = "";
+    });
+
+    $('.form-control').keyup(function(e){
+        if(e.keyCode == 13)
+        {
+            $(this).trigger("enterKey");
+        }
+    });
+
 });
 
-$('.form-control').keyup(function(e){
-    if(e.keyCode == 13)
-    {
-        $(this).trigger("enterKey");
-    }
-});
+

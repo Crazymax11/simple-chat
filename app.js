@@ -1,7 +1,7 @@
 "use strict";
 var User = require('./user');
 var ws = require("nodejs-websocket");
-
+var config = require('./config.json');
 var users = [];
 var id = 1;
 var server = ws.createServer(function (conn) {
@@ -20,7 +20,7 @@ var server = ws.createServer(function (conn) {
   user.onNameChanged = (newName) => renameUser({newname: newName, oldname: user.oldname});
   user.onDisconnect = (message) => userDisconnected({message: message, username: user.name});
 
-}).listen(1992);
+}).listen(parseInt(config.port));
 
 // text - string
 // username - string
@@ -60,7 +60,7 @@ var app = require("express")();
 var fs = require("fs");
 var path    = require("path");
 app.use(require("express").static(path.join(__dirname, 'public')));
-var config = require('./config.json');
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
@@ -71,4 +71,4 @@ app.get('/', function(req, res, next){
   res.render('chat', {url: url, port: config.port});
 });
 
-app.listen(1991);
+app.listen(parseInt(config.webport));

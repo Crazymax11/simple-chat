@@ -18,7 +18,7 @@ $(document).ready(function() {
 
 
     var newMessageSound = new Audio("/sounds/newMessage.mp3");
-
+    newMessageSound.volume = 0.007;
 
     function notification(senderName){
         var myName = 'Glebka';

@@ -20,7 +20,7 @@ var server = ws.createServer(function (conn) {
   user.onNameChanged = (newName) => renameUser({newname: newName, oldname: user.oldname});
   user.onDisconnect = (message) => userDisconnected({message: message, username: user.name});
 
-}).listen(parseInt(config.port));
+}).listen(config.port);
 
 // text - string
 // username - string
@@ -71,4 +71,4 @@ app.get('/', function(req, res, next){
   res.render('chat', {url: url, port: config.port});
 });
 
-app.listen(parseInt(config.webport));
+app.listen(config.webport);

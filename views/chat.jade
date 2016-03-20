@@ -8,28 +8,51 @@ html
     link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css' integrity='sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7' crossorigin='anonymous')
     link(href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.6/slate/bootstrap.min.css", rel="stylesheet", integrity="sha384-X9JiR5BtXUXiV6R3XuMyVGefFyy+18PHpBwaMfteb/vd2RrK6Gt4KPenkQyWLxCC", crossorigin="anonymous")
     script(type='text/javascript', src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js' integrity='sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS' crossorigin='anonymous')
-
+    script(type='text/javascript', src='/javascripts/chatController.js')
+    script(type='text/javascript', src='/javascripts/chatView.js')
+    script(type='text/javascript', src='/javascripts/jquery.nicescroll.min.js')
     head(lang='en')
-        title= title
+        -if(title)
+            title #{title}
+        -else
+            title Simple chat
         meta(charset='UTF-8')
     body
-        div
-            div(class='container-fluid row' style='height: 400px;')
-                div(class='col-md-9 pre-scrollable' id='messages') Messages:
-                div(class='col-md-3' id='userlist') Users:
-            div(class='input-group')
-                input(type='text' class='form-control' placeholder='Type here...')
-                span(class='input-group-btn')
-                    button(id='send' class='btn btn-default' type='button') Go!
-            div#settings
-                button(id='clear' class='btn btn-default' type='button') Clear chat
-                div#mute-container
-                    label.checkbox-inline
-                        input#mute-sound(type='checkbox')
-                        | Mute sound
-        script(type='text/javascript', src='/javascripts/chatController.js')
-        script(type='text/javascript', src='/javascripts/chatView.js')
+        div.container
+            div.row
+                div.col-md-8.col-sm-12
+                    div#settings.row
+                        div.col-md-2.col-sm-4
+                            button(id='clear' class='btn btn-sm btn-default' type='button') Clear chat
+                        div.col-md-2.col-sm-4
+                            label.checkbox-inline
+                                input#mute-sound(type='checkbox')
+                                | Mute sound
+                        div.col-md-8.col-sm-4 Placeholder
+                    div.row
+                        div#messages.col-sm-12.pre-scrollable
+                            //
+                                div.row.message
+                                    div.col-sm-1.col-md-offset-1.col-sm-offset-1
+                                        img.img-circle.img-responsive(src='/images/avatar.png')
+                                    div.col-sm-9
+                                        label Glebka
+                                        p.message-text hi there!
+                    div#input-group.row
+                        div.col-sm-10.col-sm-offset-1
+                            div.form-group
+                                label(for='message-text') Сообщение:
+                                input(type='text' id='message-text' class="form-control" placeholder='Type here...')
+                            button(id='send' class='btn btn-success' type='button') Send
 
-
-
-
+                div.col-md-4.col-sm-12
+                    div.row.title
+                        div.col-sm-10.col-sm-offset-1
+                            h4 Users:
+                    div#userlist.pre-scrollable
+                        //
+                            div.row.user
+                                div.col-sm-2.col-sm-offset-1
+                                    img.img-circle.img-responsive(src='/images/avatar.png')
+                                div.col-sm-8
+                                    p Glebka

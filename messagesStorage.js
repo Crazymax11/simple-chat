@@ -14,7 +14,7 @@
 class messagesStorage{
     constructor(values) {
         this.logger = logger.getLogger("messagesStorage");
-        this.logger.info("messagesModel started");
+        this.logger.info("messagesStorage started");
         this.messages = [];
     }
 

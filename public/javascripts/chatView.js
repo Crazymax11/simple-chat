@@ -13,15 +13,20 @@ $(document).ready(function() {
     }.bind(this);
     client.userMessaged = function(values){
         $("#messages").append(renderHtmlForMessage(values.from, values.text));
+        unreadMessages++;
         scrollChat();
         notification(values.from);
-
     }
 
 
     var newMessageSound = new Audio("/sounds/newMessage.mp3");
     newMessageSound.volume = 0.04;
     var chatActive = false;
+    var windowActive = true;
+    var originalPageTitle = $("title").text();
+    var titleInterval, titleTimeout;
+    var unreadMessages = 0;
+
     restoreMuteCheckbox();
 
     function restoreMuteCheckbox(){
@@ -56,14 +61,45 @@ $(document).ready(function() {
         html += '</p></div></div>';
         return html;
     }
+
+    function blinkTitle(msg1, msg2, icon1, icon2){
+        icon1 = icon1 || 'new-message.ico';
+        icon2 = icon2 || 'favicon.ico';
+        $("title").html(msg1);
+        $('link[rel$=icon]').remove();
+        $('head').append( $('<link rel="shortcut icon" type="image/x-icon"/>' ).attr( 'href', "images/ico/" + icon1  ) );
+        titleTimeout = setInterval(function(){
+            $("title").html(msg2);
+            $('link[rel$=icon]').remove();
+            $('head').append( $('<link rel="shortcut icon" type="image/x-icon"/>' ).attr( 'href', "images/ico/" + icon2  ) );
+        },1000)
+    }
     
     function notification(senderName){
         var myName = client.name;
         var muted = $('#mute-sound').is(':checked');
+        unreadMessages = windowActive ? 0 : unreadMessages;
         if((senderName != myName) && !muted){
             newMessageSound.pause();
             newMessageSound.play();
         }
+        if(unreadMessages){
+            clearInterval(titleInterval);
+            clearInterval(titleTimeout);
+            var msg1 = 'You have ' + unreadMessages + ' new messages';
+            blinkTitle(msg1, originalPageTitle);
+            titleInterval = setInterval(function(){
+               blinkTitle(msg1, originalPageTitle);
+            }, 2000)
+        }
+    }
+
+    function restoreOriginalTitle(){
+        clearInterval(titleInterval);
+        clearInterval(titleTimeout);
+        $("title").html(originalPageTitle);
+        $('link[rel$=icon]').remove();
+        $('head').append( $('<link rel="shortcut icon" type="image/x-icon"/>' ).attr( 'href', "images/ico/favicon.ico") );
     }
 
     function scrollChat(){
@@ -82,7 +118,6 @@ $(document).ready(function() {
         sendData($('.form-control').val());
         $('.form-control').val("");
     });
-
 
     $('#clear').on('click', function(){
         $('#messages').empty();
@@ -120,6 +155,15 @@ $(document).ready(function() {
 
     $("#messages").mouseout(function () {
         chatActive = false;
+    });
+
+    $(window).blur(function(e) {
+        windowActive = false;
+    });
+
+    $(window).focus(function(e) {
+        windowActive = true;
+        restoreOriginalTitle();
     });
 
 });

@@ -17,7 +17,7 @@ class ChatCore{
         new Promise(function(resolve, reject){
             let connection = values.connection;
             connection.send(JSON.stringify({type:"init request"}));
-            connection.on("text", str => {
+            connection.once("text", str => {
                 let obj = JSON.parse(str);
                 if (obj.type != "init") reject(connection);
                 for(var user of this.users){

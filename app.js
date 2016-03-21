@@ -11,10 +11,12 @@ logger.configure({
 
 var ChatCore = require('./chatCore');
 
-var core = new ChatCore();
+
 
 var ws = require("nodejs-websocket");
 var config = require('./config.json');
+
+var core = new ChatCore({messagesStorageLimit: config.messagesStorageLimit});
 var server = ws.createServer(function (conn) {
   core.pushNewUser({connection: conn});
 }).listen(config.port);

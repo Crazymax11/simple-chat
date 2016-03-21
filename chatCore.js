@@ -9,7 +9,7 @@ class ChatCore{
     constructor(values){
         this.logger = logger.getLogger("chat");
         this.users = [];
-        this.messages = new MessagesStorage();
+        this.messages = new MessagesStorage({limit: values.messagesStorageLimit});
         this.logger.info("chat core started");
     }
     // values.connection - websocket connection
@@ -42,7 +42,7 @@ class ChatCore{
             user.sendMessage(JSON.stringify({type: "init", name: user.name, users: usernames, messages: this.messages.getLasts()}));
             user.onMessage = (message) => {
                 this.broadcastMessage({type: "message", text: message, from: user.name});
-            }
+            };
             user.onNameChanged = (newName) => this.broadcastMessage({type: "rename", from: user.oldname, to: user.name});
             user.onDisconnect = (message) => {
                 this.users.splice(this.users.indexOf(user), 1);

@@ -7,7 +7,6 @@ class User{
     //values.connection - socket connection
     //values.name - nickname
     constructor(values){
-        console.log("constructor");
         //this.name = values.name || this._getRandomName();
         this.connection = values.connection;
         this.name = values.name;
@@ -38,6 +37,7 @@ class User{
             this.onDisconnect("");
         }.bind(this));
         this.connection.on("error", function(err){
+            this.logger.info("error occured");
             console.log(err);
             //this.onDisconnect("");
         }.bind(this));

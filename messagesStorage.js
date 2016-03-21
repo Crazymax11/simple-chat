@@ -16,7 +16,7 @@ class messagesStorage{
         this.logger = logger.getLogger("messagesStorage");
         this.logger.info("messagesStorage started");
         this.messages = [];
-        this.limit = values.limit || 20;
+        this.limit = "limit" in values ? values.limit : 20;
     }
 
     pushMessage(from, text){
@@ -30,7 +30,7 @@ class messagesStorage{
     }
 
     getLasts(number){
-        number = number || 10;
+        number = number || this.limit;
         return this.messages.slice(-number);
     }
 }

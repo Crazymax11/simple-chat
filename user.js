@@ -4,11 +4,13 @@
 "use strict";
 
 class User{
+    //values.connection - socket connection
+    //values.name - nickname
     constructor(values){
         console.log("constructor");
         //this.name = values.name || this._getRandomName();
         this.connection = values.connection;
-        this.usersArr = values.usersArr;
+        this.name = values.name;
         this.connection.on("text", function (str) {
             let message = JSON.parse(str);
             switch(message.type){
@@ -76,7 +78,6 @@ class User{
         }
         catch(err){
             console.log(err);
-            this.usersArr.splice(this.usersArr.indexOf(this),1);
         }
     }
     onInited(name){

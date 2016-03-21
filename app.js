@@ -1,64 +1,27 @@
 "use strict";
-var User = require('./user');
+
+
+GLOBAL.logger = require('log4js');
+logger.configure({
+  appenders: [
+    { type: 'console' },
+    { type: 'file', filename: 'logs/log.log'}
+  ]
+});
+
+var ChatCore = require('./chatCore');
+
+var core = new ChatCore();
+
 var ws = require("nodejs-websocket");
 var config = require('./config.json');
-var users = [];
-var id = 1;
 var server = ws.createServer(function (conn) {
-  console.log("lol");
-  //console.log(JSON.stringify(conn));
-  //console.log(conn);
-  let user = new User({connection: conn, id: id, usersArr: users});
-  user.onInited = function(username) {
-    userConnected(username);
-    for(var cruser of users){
-      if (cruser != user) user.sendMessage(JSON.stringify({type: "new user", username: cruser.name}));
-    }
-  };
-  users.push(user);
-  user.onMessage = (message) => broadcastMessage({text: message, username : user.name});
-  user.onNameChanged = (newName) => renameUser({newname: newName, oldname: user.oldname});
-  user.onDisconnect = (message) => userDisconnected({message: message, username: user.name});
-
+  core.pushNewUser({connection: conn});
 }).listen(config.port);
-
-// text - string
-// username - string
-function broadcastMessage(message){
-  console.log("broadcast");
-  for(var user of users){
-    user.sendMessage(JSON.stringify({type: "message", from: message.username, text: message.text}));
-  }
-}
-
-// newname - string
-// oldname - string
-function renameUser(message){
-  for(var user of users){
-    user.sendMessage(JSON.stringify({type: "rename", from: message.oldname, to: message.newname}));
-  }
-}
-
-// message - string
-// username - string
-function userDisconnected(message){
-  for(var user of users){
-    if (user.name!= message.username){
-      user.sendMessage(JSON.stringify({type: "disconnect", user: message.username, message: message.message}));
-    }
-  }
-  users.splice(users.indexOf(user),1);
-}
-
-function userConnected(username){
-  for(var user of users){
-    user.sendMessage(JSON.stringify({type: "new user", username: username}));
-  }
-}
 
 var app = require("express")();
 var fs = require("fs");
-var path    = require("path");
+var path = require("path");
 app.use(require("express").static(path.join(__dirname, 'public')));
 
 // view engine setup

@@ -23,14 +23,18 @@ class ChatClient{
                     this.userMessaged({from: data.from, text: data.text});
                     break;
                 case "init":
-                    localStorage.setItem("chat-username", data.name);
                     this.name = data.name;
+                    for(let us of data.users){
+                        this.userConnected({username:us});
+                    }
+                    break;
+                case "init request":
+                    let username = localStorage.getItem("chat-username");
+                    if (!username) username = "";
+                    this.socket.send(JSON.stringify({type: "init", name: username}));
+                    console.log('init sent');
+                    break;
             }
-        }.bind(this);
-        this.socket.onopen = function(){
-            let username = localStorage.getItem("chat-username");
-            if (!username) username = "";
-            this.socket.send(JSON.stringify({type: "init", name: username}));
         }.bind(this);
     }
     userDisconnected(values){

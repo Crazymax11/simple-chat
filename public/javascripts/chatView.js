@@ -5,7 +5,7 @@ $(document).ready(function() {
     };
     client.userDisconnected = function(values){
         $("#userlist").empty();
-        for(var user of client.users) client.userConnected({username: user});
+        for(var user of window.client.users) client.userConnected({username: user});
     };
     client.userRenamed = function(values){
         $("#userlist").empty();

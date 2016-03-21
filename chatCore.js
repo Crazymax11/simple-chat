@@ -27,7 +27,7 @@ class ChatCore{
                     }
                 }
                 if (!obj.name) obj.name = this._getRandomName();
-                resolve(new User({name: obj.name, connection: connection}));
+                resolve(new User({name: obj.name, connection: connection, logger: logger.getLogger("chat user " + obj.name )}));
             })
         }.bind(this))
         .then(user => {
@@ -44,12 +44,15 @@ class ChatCore{
                 this.users.splice(this.users.indexOf(user), 1);
                 this.broadcastMessage({type: "disconnect", user: user.name, message: message});
             };
-            logger.info(user.name + " connected to chat");
+            for(let us of this.users){
+                if (us!=user) us.sendMessage(JSON.stringify({type: "new user", username: user.name}));
+            }
+            this.logger.info(user.name + " connected to chat");
         })
         .catch( conn=> {
             conn.send(JSON.stringify({type: "err", text: "somethign went wrong"}));
             conn.close();
-            logger.info("connect rejected");
+            this.logger.info("connect rejected");
         });
     }
     _getRandomName(){

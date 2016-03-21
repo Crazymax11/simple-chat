@@ -25,6 +25,7 @@ class ChatClient{
                 case "init":
                     this.name = data.name;
                     for(let us of data.users){
+                        this.users.push(us);
                         this.userConnected({username:us});
                     }
                     break;

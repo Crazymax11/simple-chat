@@ -1,7 +1,8 @@
 {
   "url": "127.0.0.1",
   "port": 1992,
-  "webport": 1991
+  "webport": 1991,
+  "messagesStorageLimit": 10
 }
 
 

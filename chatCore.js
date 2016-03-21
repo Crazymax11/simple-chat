@@ -42,7 +42,6 @@ class ChatCore{
             user.sendMessage(JSON.stringify({type: "init", name: user.name, users: usernames, messages: this.messages.getLasts()}));
             user.onMessage = (message) => {
                 this.broadcastMessage({type: "message", text: message, from: user.name});
-<<<<<<< HEAD
             }
             user.onPrivateMessage = (recipient, message) => {
                 for(let to of this.users){
@@ -53,9 +52,6 @@ class ChatCore{
                 }
                 user.sendMessage(JSON.stringify({type: "private message", from: 'System', text: 'Username does not exist' }));
             }
-=======
-            };
->>>>>>> origin/master
             user.onNameChanged = (newName) => this.broadcastMessage({type: "rename", from: user.oldname, to: user.name});
             user.onDisconnect = (message) => {
                 this.users.splice(this.users.indexOf(user), 1);

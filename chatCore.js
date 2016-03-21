@@ -43,6 +43,15 @@ class ChatCore{
             user.onMessage = (message) => {
                 this.broadcastMessage({type: "message", text: message, from: user.name});
             }
+            user.onPrivateMessage = (recipient, message) => {
+                for(let to of this.users){
+                    if(to.name == recipient){
+                        to.sendMessage(JSON.stringify({type: "private message", text: message, from: user.name}));
+                        return true;
+                    }
+                }
+                user.sendMessage(JSON.stringify({type: "private message", from: 'System', text: 'Username does not exist' }));
+            }
             user.onNameChanged = (newName) => this.broadcastMessage({type: "rename", from: user.oldname, to: user.name});
             user.onDisconnect = (message) => {
                 this.users.splice(this.users.indexOf(user), 1);
@@ -77,6 +86,7 @@ class ChatCore{
         let randElement = arr => arr[Math.floor(Math.random()*arr.length)];
         return randElement(first) + " " + randElement(second);
     }
+
     //message will be jsoned and sent to ALL users available
     broadcastMessage(message){
         if(message.type == 'message'){

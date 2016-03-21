@@ -17,6 +17,12 @@ $(document).ready(function() {
             scrollChat();
             notification(values.from);
     };
+    client.userPrivateMessaged = function(values){
+        $("#messages").append(renderHtmlForMessage(values.from, values.text, '', 'private-message'));
+        unreadMessages++;
+        scrollChat();
+        notification(values.from);
+    };
     client.messageRestored = function (values) {
         $("#messages").append(renderHtmlForMessage(values.from, values.text));
         scrollChat();
@@ -41,10 +47,11 @@ $(document).ready(function() {
         }
     }
 
-    function renderHtmlForMessage(from, text, avatarUrl){
+    function renderHtmlForMessage(from, text, avatarUrl, messageType){
+        messageType = messageType || 'message';
         var html = '';
         avatarUrl = avatarUrl || '/images/defaultAvatar.png';
-        html += '<div class="row message"><div class="col-md-1 col-sm-1 col-md-offset-1 col-sm-offset-1"><img src="';
+        html += '<div class="row ' + messageType + '"><div class="col-md-1 col-sm-1 col-md-offset-1 col-sm-offset-1"><img src="';
         html += avatarUrl;
         html += '"class="img-circle img-responsive"></div><div class="col-md-9 col-sm-9"><label>';
         html += from;
@@ -53,6 +60,7 @@ $(document).ready(function() {
         html += '</p></div></div>';
         return html;
     }
+
 
     function renderHtmlForUser(username, avatarUrl){
         var html = '';
@@ -130,12 +138,18 @@ $(document).ready(function() {
     });
 
     function sendData(text){
-        if (text.substring(0, "/rename".length) == "/rename"){
-            var newname = text.substring("/rename".length + 1);
-            client.rename(newname);
-        }
-        else{
-            client.sendMessage(text);
+        switch(text.split(' ')[0]){
+            case '/help' :
+                client.help();
+                break;
+            case '/rename':
+                client.rename(text.split(' ')[1]);
+                break;
+            case '/wisper':
+                client.sendPrivateMessage(text.split(' ')[1], text.substr(text.split(' ')[0].length + text.split(' ')[1].length + 1));
+                break;
+            default:
+                client.sendMessage(text);
         }
     }
 

@@ -10,3 +10,7 @@
 #userlist{
   overflow-x: hidden;
 }
+
+.private-message{
+  color : #ff1ddd;
+}

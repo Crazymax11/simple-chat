@@ -22,6 +22,9 @@ class ChatClient{
                 case "message":
                     this.userMessaged({from: data.from, text: data.text});
                     break;
+                case "private message":
+                    this.userPrivateMessaged({from: data.from, text: data.text});
+                    break;
                 case "init":
                     this.name = data.name;
                     for(let us of data.users){
@@ -53,14 +56,23 @@ class ChatClient{
     userMessaged(values){
 
     }
+    userPrivateMessaged(values){
+
+    }
     messageRestored(values){
 
     }
     sendMessage(text){
         this.socket.send(JSON.stringify({type: "message", text: text}));
     }
+    sendPrivateMessage(recipient,text){
+        this.socket.send(JSON.stringify({type: "private message", text: text, recipient: recipient}));
+    }
     rename(newname){
         this.socket.send(JSON.stringify({type: "command", text: "/rename " + newname}));
+    }
+    help(){
+        this.socket.send(JSON.stringify({type: "command", text: "/help"}));
     }
 
 }

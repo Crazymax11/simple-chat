@@ -19,12 +19,23 @@ class User{
                     this.logger.debug("got message");
                     this.onMessage(message.text);
                     break;
+                case "private message":
+                    this.logger.debug("got private message");
+                    this.onPrivateMessage(message.recipient, message.text);
+                    break;
                 case "command":
                     this.logger.debug("got command");
                     if (message.text.substring(0, "/rename".length) == "/rename"){
                         this.oldname = this.name.substring(0, this.name.length);
                         this.name = message.text.substring("/rename".length + 1);
                         this.onNameChanged(this.name);
+                    }
+                    if (message.text.substring(0, "/help".length) == "/help"){
+                        let helpResponse = '';
+                        helpResponse += '<p>Change name: "/rename newname" </p>';
+                        helpResponse += '<p>Wisper: "/wisper username message" </p>';
+                        helpResponse += '<p>Help: "/help" </p>';
+                        this.sendMessage(JSON.stringify({type: "private message", from: 'System', text: helpResponse }));
                     }
                     break;
                 case "init":
@@ -46,6 +57,9 @@ class User{
 
     }
     onMessage(message){
+
+    }
+    onPrivateMessage(recipient, message){
 
     }
     onDisconnect(message){

@@ -4,10 +4,12 @@
 "use strict";
 
 var User = require('./user');
+var MessagesStorage = require('./messagesStorage')
 class ChatCore{
     constructor(values){
         this.logger = logger.getLogger("chat");
         this.users = [];
+        this.messages = new MessagesStorage();
         this.logger.info("chat core started");
     }
     // values.connection - websocket connection
@@ -37,8 +39,11 @@ class ChatCore{
             for(let us of this.users){
                 usernames.push(us.name);
             }
-            user.sendMessage(JSON.stringify({type: "init", name: user.name, users: usernames}));
-            user.onMessage = (message) => this.broadcastMessage({type: "message", text: message, from: user.name});
+            user.sendMessage(JSON.stringify({type: "init", name: user.name, users: usernames, messages: this.messages.getLasts()}));
+            user.onMessage = (message) => {
+                this.broadcastMessage({type: "message", text: message, from: user.name});
+                this.messages.pushMessage(user.name, message);
+            }
             user.onNameChanged = (newName) => this.broadcastMessage({type: "rename", from: user.oldname, to: user.name});
             user.onDisconnect = (message) => {
                 this.users.splice(this.users.indexOf(user), 1);

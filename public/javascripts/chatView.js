@@ -13,10 +13,14 @@ $(document).ready(function() {
     }.bind(this);
     client.userMessaged = function(values){
         $("#messages").append(renderHtmlForMessage(values.from, values.text));
-        unreadMessages++;
+            unreadMessages++;
+            scrollChat();
+            notification(values.from);
+    };
+    client.messageRestored = function (values) {
+        $("#messages").append(renderHtmlForMessage(values.from, values.text));
         scrollChat();
-        notification(values.from);
-    }
+    };
 
 
     var newMessageSound = new Audio("/sounds/newMessage.mp3");

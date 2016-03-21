@@ -28,6 +28,9 @@ class ChatClient{
                         this.users.push(us);
                         this.userConnected({username:us});
                     }
+                    for(let message of data.messages){
+                        this.messageRestored({from: message.from, text: message.text})
+                    }
                     break;
                 case "init request":
                     let username = localStorage.getItem("chat-username");
@@ -48,6 +51,9 @@ class ChatClient{
 
     }
     userMessaged(values){
+
+    }
+    messageRestored(values){
 
     }
     sendMessage(text){

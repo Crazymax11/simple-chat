@@ -29,7 +29,7 @@ class messagesStorage{
 
     getLasts(number){
         number = number || 10;
-        return this.messages.length > number ? this.messages.slice(-number) : this.messages;
+        return this.messages.slice(-number);
     }
 }
 

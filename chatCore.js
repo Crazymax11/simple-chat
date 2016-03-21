@@ -26,6 +26,7 @@ class ChatCore{
                         break;
                     }
                 }
+                if (!obj.name) obj.name = this._getRandomName();
                 resolve(new User({name: obj.name, connection: connection}));
             })
         }.bind(this))

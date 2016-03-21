@@ -79,10 +79,6 @@ $(document).ready(function() {
         var myName = client.name;
         var muted = $('#mute-sound').is(':checked');
         unreadMessages = windowActive ? 0 : unreadMessages;
-        if((senderName != myName) && !muted){
-            newMessageSound.pause();
-            newMessageSound.play();
-        }
         if(unreadMessages){
             clearInterval(titleInterval);
             clearInterval(titleTimeout);
@@ -91,6 +87,9 @@ $(document).ready(function() {
             titleInterval = setInterval(function(){
                blinkTitle(msg1, originalPageTitle);
             }, 2000)
+        }
+        if((senderName != myName) && !muted){
+            newMessageSound.play();
         }
     }
 

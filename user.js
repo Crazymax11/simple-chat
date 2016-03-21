@@ -14,10 +14,6 @@ class User{
         this.connection.on("text", function (str) {
             let message = JSON.parse(str);
             switch(message.type){
-                case "login":
-                    this.name = message.name;
-                    this.onNameChanged(this.name);
-                    break;
                 case "message":
                     console.log("onmes");
                     this.onMessage(message.text);
@@ -30,8 +26,7 @@ class User{
                     }
                     break;
                 case "init":
-                    this.name = message.name || this._getRandomName();
-                    this.onInited(this.name);
+                    this.name = message.name || 'Unnamed user';
                     this.sendMessage(JSON.stringify({type: "init", name: this.name}));
                     break;
             }
@@ -44,24 +39,6 @@ class User{
             console.log(err);
             //this.onDisconnect("");
         }.bind(this));
-    }
-    _getRandomName(){
-        let first = [
-            "грязный",
-            "дивный",
-            "черный",
-            "изобразительный",
-            "мокрый",
-            "огненный"
-        ];
-        let second = [
-            "лебедь",
-            "тролль",
-            "печеник",
-            "гуль"
-        ];
-        let randElement = arr => arr[Math.floor(Math.random()*arr.length)];
-        return randElement(first) + " " + randElement(second);
     }
     onNameChanged(newName){
 
@@ -79,9 +56,6 @@ class User{
         catch(err){
             console.log(err);
         }
-    }
-    onInited(name){
-
     }
 }
 

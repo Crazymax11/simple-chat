@@ -22,7 +22,6 @@ $(document).ready(function() {
         scrollChat();
     };
 
-
     var newMessageSound = new Audio("/sounds/newMessage.mp3");
     newMessageSound.volume = 0.04;
     var chatActive = false;

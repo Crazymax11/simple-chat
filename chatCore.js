@@ -42,7 +42,6 @@ class ChatCore{
             user.sendMessage(JSON.stringify({type: "init", name: user.name, users: usernames, messages: this.messages.getLasts()}));
             user.onMessage = (message) => {
                 this.broadcastMessage({type: "message", text: message, from: user.name});
-                this.messages.pushMessage(user.name, message);
             }
             user.onNameChanged = (newName) => this.broadcastMessage({type: "rename", from: user.oldname, to: user.name});
             user.onDisconnect = (message) => {
@@ -80,6 +79,9 @@ class ChatCore{
     }
     //message will be jsoned and sent to ALL users available
     broadcastMessage(message){
+        if(message.type == 'message'){
+            this.messages.pushMessage(message.from, message.text);
+        }
         for(let user of this.users){
             user.sendMessage(JSON.stringify(message));
         }

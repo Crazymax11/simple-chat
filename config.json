@@ -1,8 +1,6 @@
 {
-  "url": "127.0.0.1",
-  "port": 1992,
-  "webport": 1991,
+  "url": "chat-crazymax.rhcloud.com",
+  "port": 8080,
+  "clientWebSocketPort": 8000,
   "messagesStorageLimit": 10
 }
-
-

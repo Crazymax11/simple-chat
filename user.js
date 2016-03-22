@@ -11,7 +11,7 @@ class User{
         this.connection = values.connection;
         this.name = values.name;
         this.logger = values.logger;
-        this.connection.on("text", function (str) {
+        this.connection.on("message", function (str) {
             let message = JSON.parse(str);
             switch(message.type){
                 case "message":

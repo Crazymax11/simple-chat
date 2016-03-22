@@ -1,6 +1,5 @@
 "use strict";
 
-
 GLOBAL.logger = require('log4js');
 logger.configure({
   appenders: [
@@ -10,17 +9,12 @@ logger.configure({
 });
 
 var ChatCore = require('./chatCore');
-
-var ws = require("nodejs-websocket");
 var config = require('./config.json');
-config.port = process.env.OPENSHIFT_NODEJS_PORT || config.port;
+//заделка под openshift
+config.port = process.env.OPENSHIFT_NODEJS_PORT || process.env.PORT || config.port;
 config.webport  = process.env.OPENSHIFT_NODEJS_PORT || config.webport;
 config.url = process.env.OPENSHIFT_NODEJS_IP || config.url;
 var core = new ChatCore({messagesStorageLimit: config.messagesStorageLimit});
-var server = ws.createServer(function (conn) {
-  core.pushNewUser({connection: conn});
-}).listen(config.port);
-
 var app = require("express")();
 var fs = require("fs");
 var path = require("path");
@@ -32,8 +26,18 @@ app.set('view engine', 'jade');
 
 app.get('/', function(req, res, next){
   console.log(req.connection.remoteAddress);
+  // для запуска на локалхосте, подставить в res.render
   var url = req.connection.remoteAddress == "::1" ? "localhost" : config.url;
-  res.render('chat', {url: url, port: config.port});
+  res.render('chat', {url: config.url, port: config.clientWebSocketPort});
 });
 
-app.listen(config.webport);
+var server = require('http').createServer();
+server.on('request', app);
+
+var ws = require('ws').Server;
+//вещаем websocket сервер на http сервер
+var wsserver = new ws({server: server, autoAcceptConnections: false});
+wsserver.on('connection', function(conn) {
+  core.pushNewUser({connection:conn});
+});
+server.listen(config.port, config.url);

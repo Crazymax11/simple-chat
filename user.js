@@ -24,6 +24,7 @@ class User{
                     break;
                 case "command":
                     this.logger.debug("got command");
+                    //We need to use 'switch - case' here instead, like at chat view
                     if (message.text.substring(0, "/rename".length) == "/rename"){
                         this.oldname = this.name.substring(0, this.name.length);
                         this.name = message.text.substring("/rename".length + 1);
@@ -32,7 +33,7 @@ class User{
                     if (message.text.substring(0, "/help".length) == "/help"){
                         let helpResponse = '';
                         helpResponse += '<p>Change name: "/rename newname" </p>';
-                        helpResponse += '<p>Wisper: "/wisper username message" </p>';
+                        helpResponse += '<p>Whisper: "/whisper(/w) username message" </p>';
                         helpResponse += '<p>Help: "/help" </p>';
                         this.sendMessage(JSON.stringify({type: "private message", from: 'System', text: helpResponse }));
                     }

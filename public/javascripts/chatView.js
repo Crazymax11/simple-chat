@@ -139,13 +139,13 @@ $(document).ready(function() {
 
     function sendData(text){
         switch(text.split(' ')[0]){
-            case '/help' :
+            case '/help':
                 client.help();
                 break;
             case '/rename':
                 client.rename(text.split(' ')[1]);
                 break;
-            case '/wisper':
+            case '/whisper','/w':
                 client.sendPrivateMessage(text.split(' ')[1], text.substr(text.split(' ')[0].length + text.split(' ')[1].length + 1));
                 break;
             default:

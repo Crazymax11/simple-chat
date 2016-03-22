@@ -11,11 +11,11 @@ logger.configure({
 
 var ChatCore = require('./chatCore');
 
-
-
 var ws = require("nodejs-websocket");
 var config = require('./config.json');
-
+config.port = process.env.OPENSHIFT_NODEJS_PORT || config.port;
+config.webport  = process.env.OPENSHIFT_NODEJS_PORT || config.webport;
+config.url = process.env.OPENSHIFT_NODEJS_IP || config.url;
 var core = new ChatCore({messagesStorageLimit: config.messagesStorageLimit});
 var server = ws.createServer(function (conn) {
   core.pushNewUser({connection: conn});

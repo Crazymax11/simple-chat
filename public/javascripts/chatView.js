@@ -79,6 +79,7 @@ $(document).ready(function() {
         $("title").html(msg1);
         $('link[rel$=icon]').remove();
         $('head').append( $('<link rel="shortcut icon" type="image/x-icon"/>' ).attr( 'href', "images/ico/" + icon1  ) );
+        clearInterval(titleTimeout);
         titleTimeout = setInterval(function(){
             $("title").html(msg2);
             $('link[rel$=icon]').remove();

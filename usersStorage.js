@@ -72,6 +72,7 @@ class UsersStorage{
     .then(  (obj) => callback(NULL, obj))
     .catch( (err) => callback(err, NULL));
   }
+  //callback(err)
   deleteUser(values, callback){
     new Promise( (resolve, reject) => {
       if (!(values.login in this.keys)) reject(new Error("no such login"));
@@ -82,8 +83,8 @@ class UsersStorage{
       })
     })
     .then( () => {
-      callback();
       this.keys.splice(this.keys.indexOf(values.login), 1);
+      callback();
     })
     .catch( (err) => callback(err) );
   }

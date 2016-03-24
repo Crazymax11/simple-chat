@@ -24,9 +24,20 @@ class UsersStorage{
   //callback (err, userInfo);
   createUser(values, callback){
     new Promise( (resolve, reject) => {
-      if (!values.username || !values.password || !values.login) reject(new Error("not all data is presented"));
+      // все ли данные представлены
+      let notpresented = [];
+      if (!values.username) errstr.push("username");
+      if (!values.password) errstr.push("password");
+      if (!values.login)    errstr.push("login");
+
+      if (notpresented.length) {
+        let errstr = "provide all data to create a new user, you didn't provide these values: ";
+        for(let v of notpresented) errstr += v + " ";
+        reject(new Error(errstr));}
+      }
+
       values.avatar = values.avatar || this.defaultAvatarUrl;
-      if (values.login in this.keys) reject(new Error("login already exists"))
+      if (this.keys[values.login]) reject(new Error("login already exists"))
       let obj = {
         login: values.login,
         password: values.password,
@@ -84,7 +95,7 @@ class UsersStorage{
     })
     .then( () => {
       this.keys.splice(this.keys.indexOf(values.login), 1);
-      callback();
+      callback( NULL );
     })
     .catch( (err) => callback(err) );
   }

@@ -60,6 +60,8 @@ class ChatCore{
             for(let us of this.users){
                 if (us!=user) us.sendMessage(JSON.stringify({type: "new user", username: user.name}));
             }
+            let welcomeResponse = '<p>Welcome to our chat, ' + user.name + '. Enjoy our community.</p> <p>Type /h for help</p>';
+            user.sendMessage(JSON.stringify({type: "private message", from: 'System', text: welcomeResponse }));
             this.logger.info(user.name + " connected to chat");
         })
         .catch( conn=> {
@@ -78,10 +80,10 @@ class ChatCore{
             "Огненный"
         ];
         let second = [
-            "лебедь",
-            "тролль",
-            "печеник",
-            "гуль"
+            "Лебедь",
+            "Тролль",
+            "Печеник",
+            "Гуль"
         ];
         let randElement = arr => arr[Math.floor(Math.random()*arr.length)];
         return randElement(first) + " " + randElement(second);

@@ -3,6 +3,13 @@
  */
 "use strict";
 
+/** TODO: commands case list:
+ *  help
+ *  login
+ *  logout
+ *  rename
+ */
+
 class User{
     //values.connection - socket connection
     //values.name - nickname
@@ -24,25 +31,37 @@ class User{
                     break;
                 case "command":
                     this.logger.debug("got command");
-                    //We need to use 'switch - case' here instead, like at chat view
-                    if (message.text.substring(0, "/rename".length) == "/rename"){
-                        this.oldname = this.name.substring(0, this.name.length);
-                        this.name = message.text.substring("/rename".length + 1);
-                        this.onNameChanged(this.name);
-                    }
-                    if (message.text.substring(0, "/help".length) == "/help"){
-                        let helpResponse = '';
-                        helpResponse += '<p>Change name: "/rename newname" </p>';
-                        helpResponse += '<p>Whisper: "/whisper(/w) username message" </p>';
-                        helpResponse += '<p>Help: "/help" </p>';
-                        this.sendMessage(JSON.stringify({type: "private message", from: 'System', text: helpResponse }));
-                    }
+                    switch (message.text.split(' ')[0]) {
+                        case '/help':
+                            let helpResponse = '';
+                            helpResponse += '<p>Change name: "/rename newname" </p>';
+                            helpResponse += '<p>Whisper: "/whisper(/w) username message" </p>';
+                            helpResponse += '<p>Help: "/help (/h)" </p>';
+                            this.sendMessage(JSON.stringify({type: "private message", from: 'System', text: helpResponse }));
+                            break;
+                        case '/rename':
+                            this.oldname = this.name.toString();
+                            this.name = message.text.substring("/rename".length + 1);
+                            this.onNameChanged(this.name);
+                            break;
+                        case '/registration' :
+                            break
+                        case '/login':
+                            break;
+                        case '/logout':
+                            this.sendMessage(JSON.stringify({type: "private message", from: 'System', text: 'Cya ' + this.name }));
+                            this.connection.close();
+                            break;
+                        default:
+                            this.sendMessage(JSON.stringify({type: "private message", from: 'System', text: 'It\'s not easy to fool me, kid' }));
+                            this.connection.close();
+                    };
                     break;
-                case "init":
-                    this.name = message.name || 'Unnamed user';
-                    this.sendMessage(JSON.stringify({type: "init", name: this.name}));
-                    break;
-            }
+                default:
+                    this.sendMessage(JSON.stringify({type: "private message", from: 'System', text: 'It\'s not easy to fool me, kid' }));
+                    this.connection.close();
+
+            };
         }.bind(this));
         this.connection.on("close", function(code, reason){
             this.logger.info("user %s disconnected with code %d and reason $s", this.name, code, reason);

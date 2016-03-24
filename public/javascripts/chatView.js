@@ -140,14 +140,17 @@ $(document).ready(function() {
 
     function sendData(text){
         switch(text.split(' ')[0]){
-            case '/help':
+            case '/help', '/h':
                 client.help();
                 break;
             case '/rename':
-                client.rename(text.split(' ')[1]);
+                client.rename(text.substring("/rename".length + 1));
                 break;
             case '/whisper','/w':
                 client.sendPrivateMessage(text.split(' ')[1], text.substr(text.split(' ')[0].length + text.split(' ')[1].length + 1));
+                break;
+            case '/logout':
+                client.logout();
                 break;
             default:
                 client.sendMessage(text);

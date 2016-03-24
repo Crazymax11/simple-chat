@@ -74,5 +74,8 @@ class ChatClient{
     help(){
         this.socket.send(JSON.stringify({type: "command", text: "/help"}));
     }
+    logout(){
+        this.socket.send(JSON.stringify({type: "command", text: "/logout"}));
+    }
 
 }

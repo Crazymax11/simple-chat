@@ -43,6 +43,7 @@ class ChatClient{
                     break;
             }
         }.bind(this);
+        this.socket.onclose = (event) => this.userPrivateMessaged({from: "system message", text: "connection closed, please f5"});
     }
     userDisconnected(values){
 

@@ -178,10 +178,12 @@ $(document).ready(function() {
     });
 
     $(window).blur(function(e) {
+        unreadMessages = 0;
         windowActive = false;
     });
 
     $(window).focus(function(e) {
+        unreadMessages = 0;
         windowActive = true;
         restoreOriginalTitle();
     });

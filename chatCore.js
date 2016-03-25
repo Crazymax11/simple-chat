@@ -5,11 +5,13 @@
 
 var User = require('./user');
 var MessagesStorage = require('./messagesStorage')
+var UsersStorage = require('./usersStorage');
 class ChatCore{
     constructor(values){
-        this.logger = logger.getLogger("chat");
+        this.logger = values.logger.getLogger("chat");
         this.users = [];
         this.messages = new MessagesStorage({limit: values.messagesStorageLimit});
+        this.usersStorage = new UsersStorage({dir: values.usersStorageDir, defaultAvatarUrl: "", logger: values.logger})
         this.logger.info("chat core started");
     }
     // values.connection - websocket connection
@@ -29,7 +31,7 @@ class ChatCore{
                     }
                 }
                 if (!obj.name) obj.name = this._getRandomName();
-                resolve(new User({name: obj.name, connection: connection, logger: logger.getLogger("chat user " + obj.name )}));
+                resolve(new User({name: obj.name, connection: connection, logger: logger.getLogger("chat user " + obj.name ), usersStorage: this.usersStorage}));
             })
         }.bind(this))
         .then(user => {
@@ -57,6 +59,26 @@ class ChatCore{
                 this.users.splice(this.users.indexOf(user), 1);
                 this.broadcastMessage({type: "disconnect", user: user.name, message: message});
             };
+            user.onRegistration = (values) => {
+              this.usersStorage.createUser(values, (err, obj)=>{
+                if (err) user.sendMessage(JSON.stringify({type: "private message", from: 'System', text: 'error occurred while registration ' + err.toString()}));
+                else user.sendMessage(JSON.stringify({type: "private message", from: 'System', text: 'registration successfull, try to login now!'}));
+              })
+            }
+            user.onLogin = (values) => {
+              this.usersStorage.readUser(values, (err, obj) => {
+                if (err) user.sendMessage(JSON.stringify({type: "private message", from: 'System', text: 'error occurred while login ' + err.toString()}));
+                else {
+                  if (obj.password == values.password) {
+                    user.sendMessage(JSON.stringify({type: "private message", from: "System", text: "glad to see you again, " + obj.username}));
+                    user.oldname = user.name;
+                    user.name = obj.username;
+                    user.onNameChanged(obj.username);
+                  }
+                  else user.sendMessage(JSON.stringify({type: "private message", from: "System", text: "wrong password!"}));
+                }
+              })
+            }
             for(let us of this.users){
                 if (us!=user) us.sendMessage(JSON.stringify({type: "new user", username: user.name}));
             }

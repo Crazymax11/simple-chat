@@ -18,6 +18,7 @@ class User{
         this.connection = values.connection;
         this.name = values.name;
         this.logger = values.logger;
+        this.usersStorage = values.usersStorage;
         this.connection.on("message", function (str) {
             let message = JSON.parse(str);
             switch(message.type){
@@ -44,10 +45,18 @@ class User{
                             this.name = message.text.substring("/rename".length + 1);
                             this.onNameChanged(this.name);
                             break;
-                        case '/registration' :
+                        case '/register' :
+                            let re = /\/register\s([\d\w]+)\s([\w\d]+)\s([\w\d]+)/;
+                            let matched = message.text.match(re);
+                            if(matched) this.onRegistration({login: matched[1], password: matched[2], username: matched[3]});
+                            else this.sendMessage(JSON.stringify({type: "private message", from: 'System', text: 'type /register login password username'}));
                             break
-                        case '/login':
+                        case '/login':{
+                            let re = /\/login\s([\d\w]+)\s([\w\d]+)/;
+                            let matched = message.text.match(re);
+                            matched ? this.onLogin({login: matched[1], password: matched[2]}): this.sendMessage(JSON.stringify({type: "private message", from: 'System', text: 'type /login login password'}));
                             break;
+                          }
                         case '/logout':
                             this.sendMessage(JSON.stringify({type: "private message", from: 'System', text: 'Cya ' + this.name }));
                             this.connection.close();
@@ -83,6 +92,10 @@ class User{
 
     }
     onDisconnect(message){
+
+    }
+    //values.login, values.username, values.password
+    onRegistration(values){
 
     }
     sendMessage(str){

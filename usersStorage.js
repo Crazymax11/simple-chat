@@ -8,13 +8,14 @@
 
 var fs = require('fs');
 // хранилище - папка с файлами
-
-// TODO: проверка на существующие юзернеймы
+var mkdirp = require('mkdirp');
 class UsersStorage{
   constructor(values){
     this.dir = values.dir;
     this.defaultAvatarUrl = values.defaultAvatarUrl;
     this.logger = values.logger.getLogger("user storage");
+    // создать директорию если ее нет
+    mkdirp.sync(this.dir);
     this.logger.info("user storage loaded");
   }
   //callback (err, userInfo);
@@ -56,13 +57,13 @@ class UsersStorage{
         resolve(obj);
       })
     })})
-    .then(  (obj) => callback({}, obj))
-    .catch( (err) => callback(err, {}));
+    .then(  (obj) => callback(null, obj))
+    .catch( (err) => callback(err, null));
   }
   // callback( err, userInfo)
   readUser(values, callback){
       fs.readFile(this.dir + '/' + values.login, (err, data) =>{
-        err ? callback(err, {}) : callback(err, JSON.parse(data));
+        err ? callback(err, null) : callback(err, JSON.parse(data));
       });
   }
   // обновляет данные о юзере, callback (err, userInfo)
@@ -79,8 +80,8 @@ class UsersStorage{
         });
       });
     })
-    .then(  (obj) => callback(obj, {}))
-    .catch( (err) => callback(err, {}));
+    .then(  (obj) => callback(obj, null))
+    .catch( (err) => callback(err, null));
   }
   //callback(err)
   deleteUser(values, callback){
@@ -91,7 +92,7 @@ class UsersStorage{
       })
     })
     .then( () => {
-      callback( {} );
+      callback( null );
     })
     .catch( (err) => callback(err) );
   }

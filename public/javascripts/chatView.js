@@ -86,7 +86,7 @@ $(document).ready(function() {
             $('head').append( $('<link rel="shortcut icon" type="image/x-icon"/>' ).attr( 'href', "images/ico/" + icon2  ) );
         },1000)
     }
-    
+
     function notification(senderName){
         var myName = client.name;
         var muted = $('#mute-sound').is(':checked');
@@ -152,6 +152,12 @@ $(document).ready(function() {
             case '/logout':
                 client.logout();
                 break;
+            case '/register':
+                client.sendCommand(text);
+                break;
+            case '/login':
+                client.sendCommand(text);
+                break;
             default:
                 client.sendMessage(text);
         }
@@ -189,5 +195,3 @@ $(document).ready(function() {
     });
 
 });
-
-

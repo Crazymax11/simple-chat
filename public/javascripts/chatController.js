@@ -78,5 +78,8 @@ class ChatClient{
     logout(){
         this.socket.send(JSON.stringify({type: "command", text: "/logout"}));
     }
+    sendCommand(text){
+      this.socket.send(JSON.stringify({type: "command", text: text}));
+    }
 
 }

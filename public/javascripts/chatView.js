@@ -86,7 +86,7 @@ $(document).ready(function() {
             $('head').append( $('<link rel="shortcut icon" type="image/x-icon"/>' ).attr( 'href', "images/ico/" + icon2  ) );
         },1000)
     }
-    
+
     function notification(senderName){
         var myName = client.name;
         var muted = $('#mute-sound').is(':checked');
@@ -140,14 +140,23 @@ $(document).ready(function() {
 
     function sendData(text){
         switch(text.split(' ')[0]){
-            case '/help':
+            case '/help', '/h':
                 client.help();
                 break;
             case '/rename':
-                client.rename(text.split(' ')[1]);
+                client.rename(text.substring("/rename".length + 1));
                 break;
             case '/whisper','/w':
                 client.sendPrivateMessage(text.split(' ')[1], text.substr(text.split(' ')[0].length + text.split(' ')[1].length + 1));
+                break;
+            case '/logout':
+                client.logout();
+                break;
+            case '/register':
+                client.sendCommand(text);
+                break;
+            case '/login':
+                client.sendCommand(text);
                 break;
             default:
                 client.sendMessage(text);
@@ -175,14 +184,14 @@ $(document).ready(function() {
     });
 
     $(window).blur(function(e) {
+        unreadMessages = 0;
         windowActive = false;
     });
 
     $(window).focus(function(e) {
+        unreadMessages = 0;
         windowActive = true;
         restoreOriginalTitle();
     });
 
 });
-
-

@@ -3,6 +3,9 @@ logs
 *.log
 npm-debug.log*
 
+
+data
+
 # Runtime data
 pids
 *.pid
@@ -37,3 +40,5 @@ jspm_packages
 .idea
 public/images/avatar.png
 public/images/avatar2.png
+empty.js
+_config.json

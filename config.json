@@ -3,4 +3,5 @@
   "port": 8080,
   "clientWebSocketPort": 8000,
   "messagesStorageLimit": 10
+  "usersStorageDir": "./data/users"
 }

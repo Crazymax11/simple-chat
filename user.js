@@ -73,7 +73,7 @@ class User{
             };
         }.bind(this));
         this.connection.on("close", function(code, reason){
-            this.logger.info("user %s disconnected with code %d and reason $s", this.name, code, reason);
+            this.logger.info("user %s disconnected with code %d and reason %s", this.name, code, reason);
             this.onDisconnect("");
         }.bind(this));
         this.connection.on("error", function(err){

@@ -66,18 +66,25 @@ class ChatCore{
               })
             }
             user.onLogin = (values) => {
-              this.usersStorage.readUser(values, (err, obj) => {
-                if (err) user.sendMessage(JSON.stringify({type: "private message", from: 'System', text: 'error occurred while login ' + err.toString()}));
-                else {
-                  if (obj.password == values.password) {
-                    user.sendMessage(JSON.stringify({type: "private message", from: "System", text: "glad to see you again, " + obj.username}));
-                    user.oldname = user.name;
-                    user.name = obj.username;
-                    user.onNameChanged(obj.username);
-                  }
-                  else user.sendMessage(JSON.stringify({type: "private message", from: "System", text: "wrong password!"}));
-                }
+              return new Promise( (resolve, reject) => {
+                this.usersStorage._doesLoginExists({login: values.login}, (ex) => ex? resolve(values) : reject(new Error("wrong login/pass pair")));
               })
+              .then( (values) => {
+                return new Promise( (resolve, reject) => {
+                  this.usersStorage.readUser(values, (err, obj) => {
+                    err ? reject(err) : (obj.password == values.password ? resolve(values) :reject(new Error("wrong login/pass pair")));
+                  })
+                })
+              })
+              .then( (values) => {
+                user.sendMessage(JSON.stringify({type: "private message", from: "System", text: "glad to see you again, " + obj.username}));
+                user.oldname = user.name;
+                user.name = obj.username;
+                user.onNameChanged(obj.username);
+              })
+              .catch( (err) => {
+                user.sendMessage(JSON.stringify({type: "private message", from: "System", text: err.toString()}));
+              });
             }
             for(let us of this.users){
                 if (us!=user) us.sendMessage(JSON.stringify({type: "new user", username: user.name}));

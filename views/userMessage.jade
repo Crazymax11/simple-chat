@@ -1,0 +1,10 @@
+div.row.user-message
+  div.col-xs-2.user-info-column
+    p= username 
+    img(src= avatarUrl).img-circle.img-responsive
+  div.col-xs-10.messages-info-column
+    div.message-info-header
+      p= time
+    div.message-info-body.top-margin-4
+      each message in messages
+        p= message

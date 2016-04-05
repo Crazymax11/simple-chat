@@ -14,3 +14,29 @@
 .private-message{
   color : #ff1ddd;
 }
+
+.top-margin-1{
+  margin-top: 1px;
+}
+
+.top-margin-2{
+  margin-top: 2px;
+}
+.top-margin-3{
+  margin-top: 3px;
+}
+.top-margin-4{
+  margin-top: 4px;
+}
+.top-margin-5{
+  margin-top: 5px;
+}
+
+.user-message{
+  background-color: #575b60;
+  margin-top: 5px;
+}
+
+.message-info-header > p {
+  text-align: right;
+}

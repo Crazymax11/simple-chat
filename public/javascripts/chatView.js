@@ -1,5 +1,6 @@
 $(document).ready(function() {
     window.client = new ChatClient({url:"ws://" + url + ":" +port});
+    client.lastMessaged = "";
     client.userConnected = function(values){
         $("#userlist").append(renderHtmlForUser(values.username));
     };
@@ -12,22 +13,50 @@ $(document).ready(function() {
         for(var user of client.users) client.userConnected({username: user});
     }.bind(this);
     client.userMessaged = function(values){
-        $("#messages").append(renderHtmlForMessage(values.from, values.text));
-            unreadMessages++;
-            scrollChat();
-            notification(values.from);
+      client.appendMessage({
+        trigger: true,
+        from: values.from,
+        messages: [values.text]
+      });
     };
     client.userPrivateMessaged = function(values){
-        $("#messages").append(renderHtmlForMessage(values.from, values.text, '', 'private-message'));
-        unreadMessages++;
-        scrollChat();
-        notification(values.from);
+      client.appendMessage({
+        trigger: true,
+        from: values.from,
+        messages: [values.text]
+      }).addClass("private-message");
     };
     client.messageRestored = function (values) {
-        $("#messages").append(renderHtmlForMessage(values.from, values.text));
-        scrollChat();
+      client.appendMessage({
+        trigger: true,
+        from: values.from,
+        messages: [values.text]
+      });
     };
-
+    client.appendMessage = (values) => {
+      let time = values.time || (new Date().getHours() + ":" + new Date().getMinutes());
+      if (client.lastMessaged === values.from){
+        let objects = $(".message-info-body");
+        let targetObj = objects[objects.length-1];
+        for(let message of values.messages)
+          $(targetObj).append("<p> " + message+ " </p");
+      }
+      else{
+        $("#messages").append(render_user_message({
+          username: values.from,
+          avatarUrl: values.avatarUrl || '/images/defaultAvatar.png',
+          time: time,
+          messages: values.messages
+        }));
+      }
+      scrollChat();
+      if (values.trigger) {
+        unreadMessages++;
+        notification(values.from);
+      }
+      client.lastMessaged = values.from;
+      return $(".user-message").last();
+    };
     var newMessageSound = new Audio("/sounds/newMessage.mp3");
     newMessageSound.volume = 0.04;
     var chatActive = false;

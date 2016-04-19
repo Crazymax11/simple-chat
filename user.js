@@ -9,26 +9,36 @@
  *  logout
  *  rename
  */
+const EventEmitter = require('events');
+/*
+  evetns with arguments:
+  message (string text);
+  privateMessage(string recipient, string text);
+  nameChanged (string newName, string oldName);
+  registration ({string login, string password, string username});
+  login( {string login, string password});
+  disconnect( string reason);
+*/
 
-class User{
+class User extends EventEmitter {
     //values.connection - socket connection
     //values.name - nickname
-    constructor(values){
+    constructor(values) {
         //this.name = values.name || this._getRandomName();
         this.connection = values.connection;
         this.name = values.name;
         this.logger = values.logger;
         this.usersStorage = values.usersStorage;
-        this.connection.on("message", function (str) {
+        this.connection.on("message", function(str) {
             let message = JSON.parse(str);
-            switch(message.type){
+            switch (message.type) {
                 case "message":
                     this.logger.debug("got message");
-                    this.onMessage(message.text);
+                    this.emit('message', message.text);
                     break;
                 case "private message":
                     this.logger.debug("got private message");
-                    this.onPrivateMessage(message.recipient, message.text);
+                    this.emit('privateMessage', message.recipient, message.text);
                     break;
                 case "command":
                     this.logger.debug("got command");
@@ -38,73 +48,89 @@ class User{
                             helpResponse += '<p>Change name: "/rename newname" </p>';
                             helpResponse += '<p>Whisper: "/whisper(/w) username message" </p>';
                             helpResponse += '<p>Help: "/help (/h)" </p>';
-                            this.sendMessage(JSON.stringify({type: "private message", from: 'System', text: helpResponse }));
+                            this.sendMessageObj({
+                                type: "private message",
+                                from: 'System',
+                                text: helpResponse
+                            });
                             break;
                         case '/rename':
                             this.oldname = this.name.toString();
                             this.name = message.text.substring("/rename".length + 1);
-                            this.onNameChanged(this.name);
+                            this.emit('nameChanged', this.name, this.oldname);
                             break;
-                        case '/register' :
+                        case '/register':
                             let re = /\/register\s([\d\w]+)\s([\w\d]+)\s([\w\d]+)/;
                             let matched = message.text.match(re);
-                            if(matched) this.onRegistration({login: matched[1], password: matched[2], username: matched[3]});
-                            else this.sendMessage(JSON.stringify({type: "private message", from: 'System', text: 'type /register login password username'}));
-                            break
-                        case '/login':{
-                            let re = /\/login\s([\d\w]+)\s([\w\d]+)/;
-                            let matched = message.text.match(re);
-                            matched ? this.onLogin({login: matched[1], password: matched[2]}): this.sendMessage(JSON.stringify({type: "private message", from: 'System', text: 'type /login login password'}));
+                            if (matched) this.emit('registration', {
+                                login: matched[1],
+                                password: matched[2],
+                                username: matched[3]
+                            });
+                            else this.sendMessageObj({
+                                type: "private message",
+                                from: 'System',
+                                text: 'type /register login password username'
+                            });
                             break;
-                          }
+                        case '/login':
+                            {
+                                let re = /\/login\s([\d\w]+)\s([\w\d]+)/;
+                                let matched = message.text.match(re);
+                                matched ? this.emit('login', {
+                                    login: matched[1],
+                                    password: matched[2]
+                                }) : this.sendMessageObj({
+                                    type: "private message",
+                                    from: 'System',
+                                    text: 'type /login login password'
+                                });
+                                break;
+                            }
                         case '/logout':
-                            this.sendMessage(JSON.stringify({type: "private message", from: 'System', text: 'Cya ' + this.name }));
+                            this.sendMessageObj({
+                                type: "private message",
+                                from: 'System',
+                                text: 'Cya ' + this.name
+                            });
                             this.connection.close();
                             break;
                         default:
-                            this.sendMessage(JSON.stringify({type: "private message", from: 'System', text: 'It\'s not easy to fool me, kid' }));
+                            this.sendMessageObj({
+                                type: "private message",
+                                from: 'System',
+                                text: 'It\'s not easy to fool me, kid'
+                            });
                             this.connection.close();
-                    };
+                    }
                     break;
                 default:
-                    this.sendMessage(JSON.stringify({type: "private message", from: 'System', text: 'It\'s not easy to fool me, kid' }));
+                    this.sendMessageObj({
+                        type: "private message",
+                        from: 'System',
+                        text: 'It\'s not easy to fool me, kid'
+                    });
                     this.connection.close();
-
-            };
+            }
         }.bind(this));
-        this.connection.on("close", function(code, reason){
+        this.connection.on("close", function(code, reason) {
             this.logger.info("user %s disconnected with code %d and reason %s", this.name, code, reason);
-            this.onDisconnect("");
+            this.emit('disconnect', '');
         }.bind(this));
-        this.connection.on("error", function(err){
+        this.connection.on("error", function(err) {
             this.logger.info("error occured");
             console.log(err);
-            //this.onDisconnect("");
         }.bind(this));
     }
-    onNameChanged(newName){
-
-    }
-    onMessage(message){
-
-    }
-    onPrivateMessage(recipient, message){
-
-    }
-    onDisconnect(message){
-
-    }
-    //values.login, values.username, values.password
-    onRegistration(values){
-
-    }
-    sendMessage(str){
+    sendMessage(str) {
         try {
             this.connection.send(str);
-        }
-        catch(err){
+        } catch (err) {
             console.log(err);
         }
+    }
+    sendMessageObj(obj) {
+        this.sendMessage(JSON.stringify(obj));
     }
 }
 

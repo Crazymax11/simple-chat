@@ -4,8 +4,8 @@
 "use strict";
 
 var User = require('./user');
-var MessagesStorage = require('./messagesStorage');
-var UsersStorage = require('./usersStorage');
+var MessagesStorage = require('../models/messagesStorage');
+var UsersStorage = require('../models/usersStorage');
 class ChatCore {
     constructor(values) {
             this.logger = values.logger.getLogger("chat");
@@ -42,7 +42,7 @@ class ChatCore {
                     resolve(new User({
                         name: obj.name,
                         connection: connection,
-                        logger: this.logger.getLogger("chat user " + obj.name),
+                        logger: this.logger,
                         usersStorage: this.usersStorage
                     }));
                 });

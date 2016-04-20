@@ -1,6 +1,7 @@
 "use strict";
 
-GLOBAL.logger = require('log4js');
+let logger = require('log4js');
+GLOBAL.logger = logger;
 logger.configure({
   appenders: [
     { type: 'console' },
@@ -8,7 +9,7 @@ logger.configure({
   ]
 });
 
-var ChatCore = require('./chatCore');
+var ChatCore = require('./source/chatCore');
 var config = require('./config.json');
 //заделка под openshift
 config.port = process.env.OPENSHIFT_NODEJS_PORT || process.env.PORT || config.port;

@@ -25,6 +25,7 @@ class User extends EventEmitter {
     //values.name - nickname
     constructor(values) {
         //this.name = values.name || this._getRandomName();
+        super(values);
         this.connection = values.connection;
         this.name = values.name;
         this.logger = values.logger;

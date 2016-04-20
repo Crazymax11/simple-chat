@@ -17,7 +17,7 @@ class ChatClient{
                     this.users.splice(this.users.indexOf(data.from),1);
                     this.users.push(data.to);
                     this.userRenamed({from: data.from, to: data.to});
-                    if (this.name == data.from) {this.name = data.to;localStorage.setItem("chat-username", this.name)};
+                    if (this.name == data.from) {this.name = data.to;localStorage.setItem("chat-username", this.name);}
                     break;
                 case "message":
                     this.userMessaged({from: data.from, text: data.text});
